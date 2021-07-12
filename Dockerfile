@@ -12,6 +12,7 @@ RUN apt-get update && apt-get install --no-install-recommends -y python3.9 pytho
 RUN python3.9 -m venv /home/myuser/venv
 ENV PATH="/home/myuser/venv/bin:$PATH"
 
+
 # install requirements
 COPY requirements.txt .
 RUN pip3 install --no-cache-dir wheel
