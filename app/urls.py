@@ -24,6 +24,6 @@ from app import views
 urlpatterns = [
     path('admin/', admin.site.urls),
     path("", include("config.urls")),
-    path('hello/', views.HelloView.as_view(), name='hello')
+    path('hello/', views.HelloView.as_view(), name='hello'),
 ]
 
