@@ -19,11 +19,14 @@ from django.urls import path, include
 from django.urls import path
 from app import views
 
+#Oauth token
+from rest_framework.authtoken.views import obtain_auth_token 
 
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path("", include("config.urls")),
     path('hello/', views.HelloView.as_view(), name='hello'),
+    path('api-token-auth/', obtain_auth_token, name='api_token_auth'), #api-token-auth
 ]
 
