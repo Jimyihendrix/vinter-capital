@@ -22,6 +22,16 @@ class HelloView(APIView):
 
 
 
+#python request token     user: jimyihendrix and email: jimyihendrix@gmail.com
+#import requests
+
+#url = 'http://127.0.0.1:8000/hello/'
+#headers = {'Authorization': 'Token 2a021aed7b115975b8ce91090e82c1bf7c1d35dd'}
+#r = requests.get(url, headers=headers)
+
+
+
+
 # Create your views here.
 
 def index(response):
