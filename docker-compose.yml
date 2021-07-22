@@ -12,13 +12,14 @@ services:
       - ./data/db:/var/lib/postgresql/data
 
   web:
+    restart: always
     build: .
-    command: python3.9 manage.py runserver 0.0.0.0:8000
+    command: python3.9 manage.py runserver 0.0.0.0:8001
     volumes:
-      - .:/code
+      - .:/home/myuser/code
       - /tmp:/tmp
     ports:
-      - "8000:8000"
+      - "8001:8001"
     depends_on:
       - db
       - redis
