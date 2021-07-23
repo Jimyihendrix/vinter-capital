@@ -1,24 +1,6 @@
-version: "3.7"
+version: "3.9"
 
 services:
-  django_gunicorn:
-    volumes:
-      - static:/static
-    env_file:
-      - .env
-    build:
-      context: .
-    ports:
-      - "8000:8000"
-  nginx:
-    build: ./nginx
-    volumes:
-      - static:/static
-    ports:
-      - "88:88"
-    depends_on:
-      - django_gunicorn
-
   db:
     image: postgres:12.7
     restart: always
@@ -29,61 +11,65 @@ services:
     volumes:
       - ./data/db:/var/lib/postgresql/data
 
-  
+  web:
+    restart: always
+    build: .
+    command: python3.9 manage.py runserver 0.0.0.0:8000
+    volumes:
+      - .:/home/myuser/code
+      - /tmp:/tmp
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+      - redis
+    env_file:
+      - ./.env.dev
+
+  redis:
+    image: redis:6.2
+    hostname: redis_db
+    restart: always
+    depends_on:
+      - db
+
+  celery:
+    build: .
+    restart: always
+    volumes:
+      - .:/home/myuser/code
+    command: celery -A config worker -l info
+    depends_on:
+      - db
+      - redis
+
+  celery-beat:
+    build: .
+    restart: always
+    volumes:
+      - .:/home/myuser/code
+    command: celery -A config beat -l info
+    depends_on:
+      - db
+      - redis
+
+  django_gunicorn:
+    volumes:
+      - static:/static
+    env_file:
+      - .env.dev
+    build:
+      context: .
+    ports:
+      - "8080:8080"
+  nginx:
+    build: ./nginx
+    volumes:
+      - static:/static
+    ports:
+      - "88:88"
+    depends_on:
+      - django_gunicorn
 
 volumes:
   static:
-#version: "3.9"
-#
-#services:
-#  db:
-#    image: postgres:12.7
-#    restart: always
-#    environment:
-#      - POSTGRES_DB=postgres
-#      - POSTGRES_USER=postgres
-#      - POSTGRES_PASSWORD=postgres
-#    volumes:
-#      - ./data/db:/var/lib/postgresql/data
-#
-#  web:
-#    restart: always
-#    build: .
-#    command: python3.9 manage.py runserver 0.0.0.0:8000
-#    volumes:
-#      - .:/home/myuser/code
-#      - /tmp:/tmp
-#    ports:
-#      - "8000:8000"
-#    depends_on:
-#      - db
-#      - redis
-#    env_file:
-#      - ./.env.dev
-#
-#  redis:
-#    image: redis:6.2
-#    hostname: redis_db
-#    restart: always
-#    depends_on:
-#      - db
-#
-#  celery:
-#    build: .
-#    restart: always
-#    volumes:
-#      - .:/home/myuser/code
-#    command: celery -A config worker -l info
-#    depends_on:
-#      - db
-#      - redis
-#
-#  celery-beat:
-#    build: .
-#    restart: always
-#    volumes:
-#      - .:/home/myuser/code
-#    command: celery -A config beat -l info
-#    depends_on:
-#      - db
-#      - redis
